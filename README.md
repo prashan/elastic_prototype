@@ -1,4 +1,4 @@
-# elastic_prototype
+# Elastic Prototypes
 
 The code implements the elastic prototype algorithms decrisbed in "Elastic Prototype Classication" paper. The code will need the IBM cplex optimization package for python to run. 
 
