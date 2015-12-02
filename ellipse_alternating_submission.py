@@ -32,12 +32,12 @@ import glob
 import math
 from decimal import Decimal
 import pandas
-set_seed=210
+set_seed=230
 random.seed(set_seed)
 pp = pprint.PrettyPrinter(indent=4)
 
 #alternate minimization
-alt_runs=1
+alt_runs=2
 #version
 version='March18'
 #constants
@@ -69,13 +69,11 @@ apply_run_parametrs=True
 print_to_report=True
 cm = plt.get_cmap('gist_rainbow')
 
-random.seed(1)
-
 #Data
 HEADER=1
 
 def set_MIP_run_parameters(my_prob):
-    time_limit,tl=True,5*60  
+    time_limit,tl=True,1*60  
     emphasis,emp=True,0
     max_num_sol,sol=False,5
     max_search_nodes,n=False,3
@@ -154,11 +152,11 @@ class Solution:
         
 
     def write(self):
-        with open('./output/'+version+'_plots/sols/'+str(self.report_file)+'_'+str(self.B)+'balls.pkl','wb') as object_write:
+        with open('./'+str(self.report_file)+'_'+str(self.B)+'balls.pkl','wb') as object_write:
             pickle.dump(self,object_write, -1)
     
     def write_2(self,iteration,alt_type,population,dimension):
-        with open('./output/'+version+'_plots/saved_iteration_sols/'+str(self.report_file)+'_iter_'+str(iteration)+'_'+alt_type+'.pkl','wb') as object_write:
+        with open('./'+str(self.report_file)+'_iter_'+str(iteration)+'_'+alt_type+'.pkl','wb') as object_write:
                 pickle.dump(self,object_write, -1)
                 self.create_complete_solution(population)
                 print 'after writing ws objective :',self.calculate_objective(population,dimension)
@@ -896,7 +894,7 @@ def extract_and_output_solution(points_fn,report_file,points,N,dimensions,my_pro
     result=dict(zip(my_prob.variables.get_names(),values))
     
     if print_result_variables==True:
-        write_file=open('./output/'+version+'_plots/sols/'+report_file+'_'+str(B)+'balls.csv','w') 
+        write_file=open('./'+report_file+'_'+str(B)+'balls.csv','w') 
         types      = my_prob.variables.get_types()    
         for j in range(num_variables):
             write_file.write("{},{},{},{}\n".format(j,my_prob.variables.get_names()[j],values[j],types[j]))
@@ -933,7 +931,7 @@ def setup_objective_and_contraints(prob,B,lambda_o,points,N,dimensions,alt_type,
     const2=time.time()
     const_time=round(const2-const1,2)   
     if supress_write!=True:    
-        prob.write('./output/'+version+'_plots/'+version+'_'+report_file+'_'+str(iteration)+'_'+alt_type+'.lp') #write constraint file
+        prob.write('./'+version+'_'+report_file+'_'+str(iteration)+'_'+alt_type+'.lp') #write constraint file
         
     return obj_time,const_time,add_time,time_in_loop
 
@@ -977,7 +975,7 @@ def read(ws_sol_names):
     warm_start_solution_list=[]
     
     for sol_name in ws_sol_names:    
-        with open('./output/'+version+'_plots/'+sol_name,'rb') as object_read:
+        with open('./'+sol_name,'rb') as object_read:
             try :            
                 obj=pickle.load(object_read)
                 warm_start_solution_list.append(obj)
@@ -991,10 +989,10 @@ def read_2():
     '''Create a list of previously solved solutions'''
     warm_start_solution_list=[]
     
-    saved_sols=os.listdir('./output/'+version+'_plots/saved_iteration_sols/')
+    saved_sols=os.listdir('./')
     
     for sol_name in saved_sols:    
-        with open('./output/'+version+'_plots/saved_iteration_sols/'+sol_name,'rb') as object_read:
+        with open('./'+sol_name,'rb') as object_read:
             try :            
                 obj=pickle.load(object_read)
                 warm_start_solution_list.append(obj)
@@ -1024,7 +1022,7 @@ def warm_start(my_prob,points,N,B,sample_point_names,ws_sol_names,dimension):
 def create_ws_lists(N):   
     sample_point_names=[]
     ws_sol_names=[]
-    with open('./output/'+version+'_plots/ws_info.txt','r') as f:
+    with open('./ws_info.txt','r') as f:
         for line in f:
             sample_point_names.append(line.strip().split(',')[0])
             ws_sol_names.append(line.strip().split(',')[1])
@@ -1110,10 +1108,7 @@ def run_MIP(points_fn,report_file,points,N,dimensions,B,lambda_o,pdf_pages,names
             my_prob.solve()
             end=time.time()
             time_to_solve=round(end-start,2)
-            print 'cumulative_objective',cumulative_objective
-            print 'cb.incobjval',cb.incobjval
-            print 'cb.bestobjval',cb.bestobjval
-            
+                        
             time_str+='MIP solve time= '+str(time_to_solve)+'s\n'
             print '\nstop minimization','iteration: ',iteration,', type: ',alt_type,', time elapsed: ',time_to_solve
             print "Solution value  = ", my_prob.solution.get_objective_value()
@@ -1284,7 +1279,7 @@ def create_report(B,lambda_array,points_file,report_file,data_set,fold):
     points,N,dimensions,names_dict,header,test_points=create_fold_points(data_set,fold)
     print 'dimensions',dimensions
     points_fn=str(data_set)+'_'+str(fold)
-    pdf_pages = PdfPages('./output/'+version+'_plots/sols/'+version+'_'+report_file+'.pdf')    
+    pdf_pages = PdfPages('./'+version+'_'+report_file+'.pdf')    
          
     if plot_one==False: 
         for b,lam in product(xrange(1,B+1),lambda_array):
@@ -1629,8 +1624,8 @@ def print_solution(my_prob,points,dimensions,sol,k_list,n_list,c_list,centers,su
         print '(j,ball,class):',tup,class_dict[int(points[int(tup[0])][0])],' -> i:',[names_dict[int(val)] for val in value]          
         correct_str+='(j,ball,class):'+str(tup)+str(class_dict[int(points[int(tup[0])][0])])+' cluster: omega'+str(sorted(omega[tup[1]],key=lambda x: x[1],reverse=True))+' \n'+str([names_dict[int(val)] for val in value])+'\n\n'
         
-    with open('./output/'+version+'_plots/sols/'+report_file+'_ellipse_plot3d.csv','a') as f:
-        f.write(omega_str)
+#    with open('./'+report_file+'_ellipse_plot3d.csv','a') as f:
+#        f.write(omega_str)
     
     
     if print_to_report==True:
@@ -1651,16 +1646,9 @@ def print_solution(my_prob,points,dimensions,sol,k_list,n_list,c_list,centers,su
         plt.axis('off')
         [fig.text(0.08,.9-.9*float(i)/page_size,l,fontsize=7) for i,l in enumerate(all_lines[pages*page_size:pages*page_size+remainder])]
         pdf_pages.savefig(fig)
+        plt.close()
     
     
-    
-    with open('./output/'+version+'_plots/'+report_file+'_classification_file_'+str(iteration)+'_'+alt_type+'_correct.txt','w') as f:
-        f.write('correctly classified 1-Sugar_Tot_.g., 2-Iron_.mg., 3-Cholestrl_.mg1\n')        
-        f.write(correct_str)
-    
-    with open('./output/'+version+'_plots/'+report_file+'_classification_file_'+str(iteration)+'_'+alt_type+'_incorrect.txt','w') as f:    
-        f.write('incorrectly classified 1-Sugar_Tot_.g., 2-Iron_.mg., 3-Cholestrl_.mg1\n')
-        f.write(incorrect_str)
     plt.close("all")
     
     return
@@ -1762,14 +1750,13 @@ def plot_3d(balls,points,centers,omega_matrix,class_names,pdf_pages,report_str,h
     ax.set_xlabel(v_list[0]+' | '+feature_dict[v_list[0]])
     ax.set_ylabel(v_list[1]+' | '+feature_dict[v_list[1]])
     ax.set_zlabel(v_list[2]+' | '+feature_dict[v_list[2]])    
-#    plt.draw()
-    plt.show()   
+    plt.show()
+    fig.savefig('ellipse_alternating_iter'+str(iteration)+'_choose_'+alt_type)
     pdf_pages.savefig(fig) 
     
     #-------------------------------------------------------------------------
     #only points
     fig = plt.figure()
-    plt.ion() 
     ax = plt.subplot(111, projection='3d')
     ax.set_color_cycle([cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])   
     scatter_values=[tuple(val) for val in points.values()] 
@@ -1802,13 +1789,10 @@ def plot_3d(balls,points,centers,omega_matrix,class_names,pdf_pages,report_str,h
     plt.title(split+' | Run '+str(iteration)+' | choose '+alt_type+' | balls(selected/total)= '+str(len(centers.keys()))+'/'+str(len(omega_matrix.keys())))
     ax.set_xlabel(v_list[0]+' | '+feature_dict[v_list[0]])
     ax.set_ylabel(v_list[1]+' | '+feature_dict[v_list[1]])
-    ax.set_zlabel(v_list[2]+' | '+feature_dict[v_list[2]])    
-       
+    ax.set_zlabel(v_list[2]+' | '+feature_dict[v_list[2]])           
     pdf_pages.savefig(fig) 
     plt.close()
-
-     
-    
+   
     #save text
     fig=plt.figure()
     plt.axis('off')
@@ -1928,10 +1912,6 @@ def plot_2d(B,points,centers,omega,lambda_o,dimensions,pdf_pages,report_str,clas
     
     plt.title(split+' | 2d | Run '+str(iteration)+' | choose '+alt_type+' | balls(selected/total)= '+str(len(centers.keys()))+'/'+str(len(new_omega.keys())))
     plt.grid(True)    
-        
-    
-#    ax.relim()
-#    ax.autoscale_view() 
     plt.show()
     pdf_pages.savefig(fig)  
     plt.close()

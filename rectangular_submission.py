@@ -82,7 +82,7 @@ HEADER=1
 cm = plt.get_cmap('gist_rainbow')
  
 def set_MIP_run_parameters(my_prob):
-    time_limit,tl=True,10*60  
+    time_limit,tl=True,5*60  
     emphasis,emp=True,0
     max_num_sol,sol=False,1
     max_search_nodes,n=False,3
@@ -184,11 +184,11 @@ class Solution:
         
     def write(self):
         print 'writing solution'
-        with open('./output/'+version+'_plots/sols/'+str(self.report_file)+'_'+str(self.B)+'balls.pkl','wb') as object_write:
+        with open('./'+str(self.report_file)+'_'+str(self.B)+'balls.pkl','wb') as object_write:
             pickle.dump(self,object_write, -1)
     
     def write_2(self,iteration,alt_type,population,dimension):
-        with open('./output/'+version+'_plots/saved_iteration_sols/'+str(self.report_file)+'_iter_'+str(iteration)+'_'+alt_type+'.pkl','wb') as object_write:
+        with open('./'+str(self.report_file)+'_iter_'+str(iteration)+'_'+alt_type+'.pkl','wb') as object_write:
                 pickle.dump(self,object_write, -1)
                 self.create_complete_solution(population)
                 print 'after writing ws objective :',self.calculate_objective(population,dimension)
@@ -414,7 +414,7 @@ def create_points(points_file):
     N=len(points.keys())
  
     #write all points
-    with open('./output/'+version+'_plots/all_data_'+str(len(points.keys()))+'.csv','w') as f:
+    with open('./all_data_'+str(len(points.keys()))+'.csv','w') as f:
             for k in points.keys():
                 f.write(str(k)+','+','.join(map(str,points[k]))+'\n')
                 
@@ -500,48 +500,7 @@ def create_fold_points(data_set,fold):
     
     return train_points,N,dimensions,names_dict,header,test_points
 
-def create_folds(points,write_header,names_dict):
-    keys_points=points.keys()
-    #write folds
-    data_set='d4_650_v3'
-    withheld_size=150
-    cv_data_size=500
-    num_folds=5
-    fold_size=cv_data_size/num_folds
-    #create withheld,cv
-    withheld=random.sample(keys_points,withheld_size)
-    cv_data=random.sample(list(set(keys_points)-set(withheld)),cv_data_size)
-    
-        
-    
-    fold_start=0
-    for fld in xrange(num_folds):
-        fold_start=int(fld*fold_size)
-        fold_end=int(fold_start+fold_size)
-        if fold_end>cv_data_size:
-            fold_end=cv_data_size
-        
-        if os.path.exists('./data/'+data_set+'/fold'+str(fld+1))==0:
-            os.mkdir('./data/'+data_set+'/fold'+str(fld+1))    
-        if os.path.exists('./data/'+data_set+'/fold'+str(fld+1)+'/train')==0:
-            os.mkdir('./data/'+data_set+'/fold'+str(fld+1)+'/train') 
-        if os.path.exists('./data/'+data_set+'/fold'+str(fld+1)+'/test')==0:
-            os.mkdir('./data/'+data_set+'/fold'+str(fld+1)+'/test') 
-          
-        
-        fold_test=cv_data[fold_start:fold_end]
-        fold_train=[item for item in cv_data if item not in fold_test]          
-          
-        with open('./data/'+data_set+'/fold'+str(fld+1)+'/train/fold_'+str(fld+1)+'_train.csv','w') as f:
-            f.write(write_header)         
-            for k in fold_train:
-                f.write(names_dict[k]+','+','.join(map(str,points[k]))+'\n')
-        with open('./data/'+data_set+'/fold'+str(fld+1)+'/test/fold_'+str(fld+1)+'_test.csv','w') as f:
-            f.write(write_header)             
-            for k in fold_test:
-                f.write(names_dict[k]+','+','.join(map(str,points[k]))+'\n')
-       
-        
+      
     
 def create_raw_points(points_file):
     '''Read the points and create a data structure'''    
@@ -1274,7 +1233,7 @@ def extract_and_output_solution(points_fn,report_file,points,N,dimensions,my_pro
     result=dict(zip(my_prob.variables.get_names(),values))
     
     if print_result_variables==True:
-        write_file=open('./output/'+version+'_plots/sols/'+report_file+'_'+str(B)+'balls.csv','w') 
+        write_file=open('./'+report_file+'_'+str(B)+'balls.csv','w') 
         types      = my_prob.variables.get_types()    
         for j in range(num_variables):
             write_file.write("{},{},{},{}\n".format(j,my_prob.variables.get_names()[j],values[j],types[j]))
@@ -1287,15 +1246,7 @@ def extract_and_output_solution(points_fn,report_file,points,N,dimensions,my_pro
     
     
     sol=Solution(N,B,ajb_list,beta_list,omega,v_list,points_fn,report_file)
-    sol.write()      
-#    if supress_write==False:    
-#        sol.write() 
-        #my_prob.MIP_starts.write('./test_all_'+str(iteration)+'.mst')
-#        if alt_type=='proto':
-#            sol.write_2(iteration,alt_type,points,dimensions)
-#            print 'the objective of the solution is ',sol.calculate_objective(points,dimensions)
-#            print 'writing mst'
-#            my_prob.MIP_starts.write('./test_all_'+str(iteration)+'.mst')
+#    sol.write()      
             
 
     print_solution(my_prob,points,dimensions,sol,k_list,n_list,c_list,centers,sum_omega,lambda_o,pdf_pages,time_to_solve,parameter_str,names_dict,header,iteration,alt_type,report_file,feature_dict,d_list,g_list,class_dict)  
@@ -1317,7 +1268,7 @@ def setup_objective_and_contraints(prob,B,lambda_o,points,N,dimensions,alt_type,
     const2=time.time()
     const_time=round(const2-const1,2)   
     if supress_write!=True:    
-        prob.write('./output/'+version+'_plots/'+version+'_'+report_file+'_'+str(iteration)+'_'+alt_type+'.lp') #write constraint file
+        prob.write('./'+version+'_'+report_file+'_'+str(iteration)+'_'+alt_type+'.lp') #write constraint file
         
     return obj_time,const_time,add_time,time_in_loop
 
@@ -1370,10 +1321,10 @@ def read_2():
     '''Create a list of previously solved solutions'''
     warm_start_solution_list=[]
     
-    saved_sols=os.listdir('./output/'+version+'_plots/saved_iteration_sols/')
+    saved_sols=os.listdir('./saved_iteration_sols/')
     
     for sol_name in saved_sols:    
-        with open('./output/'+version+'_plots/saved_iteration_sols/'+sol_name,'rb') as object_read:
+        with open('./'+sol_name,'rb') as object_read:
             try :            
                 obj=pickle.load(object_read)
                 warm_start_solution_list.append(obj)
@@ -2002,8 +1953,8 @@ def print_solution(my_prob,points,dimensions,sol,k_list,n_list,c_list,centers,su
         print '(j,ball,class):',tup,class_dict[int(points[int(tup[0])][0])],' -> i:',[names_dict[int(val)] for val in value]          
         correct_str+='(j,ball,class):'+str(tup)+str(class_dict[int(points[int(tup[0])][0])])+' cluster: omega'+str(sorted(omega[tup[1]],key=lambda x: x[1],reverse=True))+' \n'+str([names_dict[int(val)] for val in value])+'\n\n'
         
-    with open('./output/'+version+'_plots/'+report_file+'_plot3d.csv','a') as f:
-        f.write(omega_str)
+#    with open('./'+report_file+'_plot3d.csv','a') as f:
+#        f.write(omega_str)
     
     
     if print_to_report==True:
@@ -2025,15 +1976,6 @@ def print_solution(my_prob,points,dimensions,sol,k_list,n_list,c_list,centers,su
         [fig.text(0.08,.9-.9*float(i)/page_size,l,fontsize=7) for i,l in enumerate(all_lines[pages*page_size:pages*page_size+remainder])]
         pdf_pages.savefig(fig)
     
-    
-    
-    with open('./output/'+version+'_plots/'+report_file+'_classification_file_'+str(iteration)+'_'+alt_type+'_correct.txt','w') as f:
-        f.write('correctly classified 1-Sugar_Tot_.g., 2-Iron_.mg., 3-Cholestrl_.mg1\n')        
-        f.write(correct_str)
-    
-    with open('./output/'+version+'_plots/'+report_file+'_classification_file_'+str(iteration)+'_'+alt_type+'_incorrect.txt','w') as f:    
-        f.write('incorrectly classified 1-Sugar_Tot_.g., 2-Iron_.mg., 3-Cholestrl_.mg1\n')
-        f.write(incorrect_str)
     plt.close("all")
     
     return
@@ -2081,7 +2023,7 @@ def plot_ellipsoid(color,c,ax,center_x,center_y,center_z,m_x,m_y,m_z):
     ax.plot_wireframe(x, y, z,  rstride=4, cstride=4, color=color, alpha=0.2)
   
 def plot_3d(balls,points,centers,omega_matrix,class_names,pdf_pages,report_str,header,iteration,alt_type,feature_dict,v_list):
-    plt.ion()    
+       
     NUM_COLORS = balls
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -2112,7 +2054,8 @@ def plot_3d(balls,points,centers,omega_matrix,class_names,pdf_pages,report_str,h
     ax.set_ylabel(v_list[1]+' | '+feature_dict[v_list[1]])
     ax.set_zlabel(v_list[2]+' | '+feature_dict[v_list[2]])    
     
-    plt.show()   
+    plt.show() 
+    fig.savefig('./Rectangles-hierarchical')
     pdf_pages.savefig(fig)      
     
     #save text
@@ -2122,8 +2065,7 @@ def plot_3d(balls,points,centers,omega_matrix,class_names,pdf_pages,report_str,h
     plt.text(0, 0,report_str,fontsize=8)
     pdf_pages.savefig(fig)
     plt.close()
-    plt.ioff()
-
+    
 def convert_dimensions_d_to_Nd(v_list,points,omega,centers,dimensions,Nd=2):
     
     selected_features=[int(v[1:]) for v in v_list]
@@ -2189,8 +2131,7 @@ def draw_cube(radaii_centers,v_list,feature_dict,balls,points,pdf_pages,train_po
             class_type=points[j][0]
         elif split=='Test':
             class_type=train_points[j][0]
-#        if class_type!=-1:
-#            continue
+
         c1=center_list[0]
         c2=center_list[1]
         c3=center_list[2]
@@ -2198,8 +2139,6 @@ def draw_cube(radaii_centers,v_list,feature_dict,balls,points,pdf_pages,train_po
         rad2=radii_list[1]
         rad3=radii_list[2]
         
-        
-    
         r1 = [-1*rad1, rad1]
         r2 = [-1*rad2, rad2]
         r3 = [-1*rad3, rad3]
@@ -2220,11 +2159,10 @@ def draw_cube(radaii_centers,v_list,feature_dict,balls,points,pdf_pages,train_po
     ax.set_ylabel(feature_dict['v2']+' | '+feature_dict['v2'])
     ax.set_zlabel(feature_dict['v3']+' | '+feature_dict['v3']) 
         
-        
-            
     plt.show()
-#    plt.savefig('./cube_'+str(c1)+'.jpg')
-    pdf_pages.savefig(fig) 
+    fig.savefig('Rectangles-hierarchical')
+    pdf_pages.savefig(fig)
+    plt.close()
     
 def draw_rectangle(radaii_centers,v_list,feature_dict,balls,points,pdf_pages,train_points,split):
       
@@ -2289,9 +2227,11 @@ def draw_rectangle(radaii_centers,v_list,feature_dict,balls,points,pdf_pages,tra
     ax.set_xlabel(feature_dict['v1']+' | '+feature_dict['v1'])     
     ax.set_ylabel(feature_dict['v2']+' | '+feature_dict['v2'])
     ax.set_zlabel(feature_dict['v3']+' | '+feature_dict['v3']) 
-    plt.show()
-#    plt.savefig('./cube_'+str(c1)+'.jpg')
+    
+    fig.savefig('Rectangles-hierarchical')
+    plt.show() 
     pdf_pages.savefig(fig)
+    plt.close()
     
 
     
@@ -2302,7 +2242,7 @@ def create_report(B,lambda_array,data_set,fold,report_file,points_file):
     points,N,dimensions,names_dict,header,test_points=create_fold_points(data_set,fold)
     print 'dimensions',dimensions
     points_fn=str(data_set)+'_'+str(fold)
-    pdf_pages = PdfPages('./output/'+version+'_plots/sols/'+version+'_'+report_file+'.pdf')    
+    pdf_pages = PdfPages('./'+version+'_'+report_file+'.pdf')    
          
     if plot_one==False: 
         for b,lam in product(xrange(1,B+1),lambda_array):                                        
