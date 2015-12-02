@@ -39,8 +39,6 @@ set_seed=210
 random.seed(set_seed)
 
 
-#python.o174352
-#alternate minimization
 alt_runs=1
 #version
 version='March18'
@@ -82,7 +80,7 @@ HEADER=1
 cm = plt.get_cmap('gist_rainbow')
  
 def set_MIP_run_parameters(my_prob):
-    time_limit,tl=True,5*60  
+    time_limit,tl=True,10*60  
     emphasis,emp=True,0
     max_num_sol,sol=False,1
     max_search_nodes,n=False,3

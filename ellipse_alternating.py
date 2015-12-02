@@ -73,7 +73,7 @@ cm = plt.get_cmap('gist_rainbow')
 HEADER=1
 
 def set_MIP_run_parameters(my_prob):
-    time_limit,tl=True,1*60  
+    time_limit,tl=True,5*60  
     emphasis,emp=True,0
     max_num_sol,sol=False,5
     max_search_nodes,n=False,3
