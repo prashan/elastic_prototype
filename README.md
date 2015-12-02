@@ -14,6 +14,8 @@ rectangules hierarchial -> use rectangular.py
 
 Sample commands for running 
 *************************************************
+
+____________________________________
 ellipse alternating
 _____________________________________
 template of command
@@ -22,6 +24,7 @@ command
 python ellipse_alternating.py -d nutrition_folds -o dec1_ellipse_only_seed230_3 -b 5 -f 1
 *note the data is provided for 1 fold.
 
+____________________________________
 rectangular alternating
 _____________________________________
 template of command
@@ -30,6 +33,7 @@ command
 python rectangular_alternating.py -d nutrition_folds -o dec1_rectangular_alt_seed230_6 -b 5 -f 1
 *note the data is provided for 1 fold.
 
+_____________________________________
 rectangules hierarchial 
 _____________________________________
 template of command
@@ -38,6 +42,8 @@ command
 python rectangular.py -d nutrition_folds -o dec1_rectangular_only_seed230_6 -b 5 -f 1
 *note the data is provided for 1 fold.
 
+____________________________________
 Output generation
+____________________________________
 When the program runs it will generate relevant .jpg files and .pdf files that shows the prototypes/subspaces. The .jpg files will be 2d or 3d plots of the chosen subspaces. The .pdf file will contain the information in the .jpg files and in addition would also contain more details about the chosen prototypes and classifications.
 
