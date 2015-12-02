@@ -3,6 +3,7 @@
 Data Folder
 ************************************************
 The data is found in the "data" folder. 
+
 Training data - data\nutrition_folds\fold1\train\fold_1_train.csv
 Testing data  - data\nutrition_folds\fold1\test\fold_1_test.csv
 
