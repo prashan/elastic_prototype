@@ -1,5 +1,7 @@
 # elastic_prototype
 
+The programs will need a IBM cplex installation to run.
+
 ##Data Folder
 The data is found in the "data" folder.  
 Training data - data\nutrition_folds\fold1\train\fold_1_train.csv  
