@@ -13,8 +13,6 @@ rectangular alternating -> use rectangular_alternating.py
 rectangules hierarchial -> use rectangular.py
 
 Sample commands for running 
-*************************************************
-
 ____________________________________
 ellipse alternating
 _____________________________________
