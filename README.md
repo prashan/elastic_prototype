@@ -5,12 +5,15 @@ Data Folder
 The data is found in the "data" folder. 
 
 Training data - data\nutrition_folds\fold1\train\fold_1_train.csv
+
 Testing data  - data\nutrition_folds\fold1\test\fold_1_test.csv
 
 Code
 ************************************************
 ellipse alternating -> use ellipse_alternating.py
+
 rectangular alternating -> use rectangular_alternating.py
+
 rectangules hierarchial -> use rectangular.py
 
 Sample commands for running 
@@ -18,9 +21,13 @@ ____________________________________
 ellipse alternating
 _____________________________________
 template of command
+
 python <file_name.py> -d <data_directory> -o <output_file_name> -b <number_of_balls_to_start_with> -f <fold_number>
+
 command
+
 python ellipse_alternating.py -d nutrition_folds -o dec1_ellipse_only_seed230_3 -b 5 -f 1
+
 *note the data is provided for 1 fold.
 
 ____________________________________
@@ -36,9 +43,13 @@ _____________________________________
 rectangules hierarchial 
 _____________________________________
 template of command
+
 python <file_name.py> -d <data_directory> -o <output_file_name> -b <number_of_balls_to_start_with> -f <fold_number>
+
 command
+
 python rectangular.py -d nutrition_folds -o dec1_rectangular_only_seed230_6 -b 5 -f 1
+
 *note the data is provided for 1 fold.
 
 ____________________________________
