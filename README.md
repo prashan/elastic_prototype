@@ -1,6 +1,6 @@
 # elastic_prototype
 
-The programs will need a IBM cplex installation to run.
+The code implements the elastic prototype algorithms decrisbed in "Elastic Prototype Classication" paper. The programs will need the IBM cplex optimization package for python to run. 
 
 ##Data Folder
 The data is found in the "data" folder.  
