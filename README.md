@@ -9,9 +9,9 @@ Training data - data\nutrition_folds\fold1\train\fold_1_train.csv
 Testing data  - data\nutrition_folds\fold1\test\fold_1_test.csv
 
 ##Code
-ellipse alternating -> use ellipse_alternating.py  
-rectangular alternating -> use rectangular_alternating.py  
-rectangules hierarchial -> use rectangular.py
+For the ellipse alternating method in the paper -> use **ellipse_alternating.py**  
+For the rectangular alternating method in the paper-> use **rectangular_alternating.py**  
+For the rectangules hierarchial method in the paper-> use **rectangular.py**
 ##Sample commands for running 
 ###ellipse alternating
 #####template of command  
