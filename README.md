@@ -34,3 +34,9 @@ python rectangular.py -d nutrition_folds -o dec1_rectangular_only_seed230_6 -b 5
 ##Output generation
 When the program runs it will generate relevant .png files and .pdf files that shows the prototypes/subspaces in the "elastic_prototype/" directory. The .png files will be 2d or 3d plots of the chosen subspaces. The .pdf file will contain the information in the .png files and in addition would also contain more details about the chosen prototypes and classifications.
 
+Some of the output images are given below
+![Image of ellipse alternating](https://github.com/prashan/elastic_prototype/blob/master/ellipse_alternating_iter2_choose_space.png)
+![Image of ellipse alternating](https://github.com/prashan/elastic_prototype/blob/master/rectangular_alternating.png)
+
+
+
