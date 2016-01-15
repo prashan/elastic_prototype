@@ -3,7 +3,8 @@
 The code implements the elastic prototype algorithms decrisbed in "Elastic Prototype Classication" paper. The code will need the IBM cplex optimization package for python to run. 
 
 ##Data Folder
-The data is found in the "data" folder.  
+The data is found in the "data" folder. The data is nutrition information for different food groups. The algorithm picks prototypical examples that are the best representatives of each food cluster.  
+  
 Training data - data\nutrition_folds\fold1\train\fold_1_train.csv  
 Testing data  - data\nutrition_folds\fold1\test\fold_1_test.csv
 
