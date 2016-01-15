@@ -16,20 +16,20 @@ For the rectangules hierarchial method in the paper-> use **rectangular.py**
 ###ellipse alternating
 #####template of command  
 python \<file_name.py\> -d \<data_directory\> -o \<output_file_name\> -b \<number_of_balls_to_start_with\> -f \<fold_number\>  
-#####command  
+#####example command  
 python ellipse_alternating.py -d nutrition_folds -o dec1_ellipse_only_seed230_3 -b 5 -f 1  
 *note the data is provided for 1 fold.
 
 ###rectangular alternating
 #####template of command  
 python \<file_name.py\> -d \<data_directory\> -o \<output_file_name\> -b \<number_of_balls_to_start_with\> -f \<fold_number\>  
-#####command  
+#####example command  
 python rectangular_alternating.py -d nutrition_folds -o dec1_rectangular_alt_seed230_6 -b 5 -f 1  
 *note the data is provided for 1 fold.  
 ###rectangules hierarchial 
 #####template of command  
 python \<file_name.py\> -d \<data_directory\> -o \<output_file_name\> -b \<number_of_balls_to_start_with\> -f \<fold_number\>  
-#####command  
+#####example command  
 python rectangular.py -d nutrition_folds -o dec1_rectangular_only_seed230_6 -b 5 -f 1  
 *note the data is provided for 1 fold.
 ##Output generation
