@@ -109,51 +109,50 @@ def set_MIP_run_parameters(my_prob):
    
     parameter_str=''
     
-    if time_limit==True:
+    if time_limit:
         my_prob.parameters.timelimit.set(tl)
         parameter_str+='time_limit= '+str(tl)+'s | '
-    if emphasis==True:
+    if emphasis:
         my_prob.parameters.emphasis.mip.set(emp)
         parameter_str+='emphasis= '+str(emp)+' | ' 
-    if max_num_sol==True:
+    if max_num_sol:
         my_prob.parameters.mip.limits.solutions.set(sol)
         parameter_str+='max_num_sol= '+str(sol)+' | ' 
-    if max_search_nodes==True:
+    if max_search_nodes:
         my_prob.parameters.mip.limits.nodes.set(n)
         parameter_str+='max_search_nodes= '+str(n)+' | '
-    if aggregator_flag==True:   
+    if aggregator_flag:   
         my_prob.parameters.preprocessing.aggregator.set(agg)
-    if tolerane_flag==True:          
+    if tolerane_flag:          
         my_prob.parameters.mip.tolerances.absmipgap.set(tolerance_value)
         my_prob.parameters.mip.tolerances.mipgap.set(tolerance_value)
         #my_prob.parameters.mip.polishing.mipgap.set(1)
-    if Integrality==True:
+    if Integrality:
         my_prob.parameters.mip.tolerances.integrality.set(i_value)
-    if presolve_ignore==True:
+    if presolve_ignore:
         my_prob.parameters.preprocessing.presolve.set(presolve_value)
-    if advance_start==True:
+    if advance_start:
         my_prob.parameters.advance.set(advance_start_value) 
-    if repair_tries==True:
+    if repair_tries:
         my_prob.parameters.mip.limits.repairtries.set(repair_tries_value) 
-    if conflict_display==True:
+    if conflict_display:
         my_prob.parameters.conflict.display.set(conflict_value)        
-    if numerical_precision==True:
+    if numerical_precision:
         my_prob.parameters.emphasis.numerical.set(numerical_precision_value)  
-    if parallel_mode==True:
+    if parallel_mode:
         my_prob.parameters.parallel.set(-1) #  opportunistic parallel search mode
         my_prob.parameters.threads.set(parallel_mode_value)  
-    if display_interval==True:
+    if display_interval:
         my_prob.parameters.mip.display.set(display_value)
         my_prob.parameters.mip.interval.set(display_interval_value)
-    if tuning==True:        
+    if tuning:        
         #my_prob.parameters.tune.timelimit.set(tuning_time)
         my_prob.parameters.tune_problem() 
-    if barriers==True:
+    if barriers:
         my_prob.parameters.mip.strategy.startalgorithm.set(barrier_type)
         #my_prob.parameters.threads.set(threads)
         #my_prob.parameters.mip.limits.nodes.set(nodelim)
         
-    
     return parameter_str
 
 class MyCallback(cplex.callbacks.MIPInfoCallback):    
