@@ -103,57 +103,53 @@ def set_MIP_run_parameters(my_prob):
     #tuning
     tuning,tuning_time=False,300
     barriers,barrier_type,threads,nodelim=False,4,0,0
-    
-   
-    
-    
+       
     parameter_str=''
     
-    if time_limit==True:
+    if time_limit:
         my_prob.parameters.timelimit.set(tl)
         parameter_str+='time_limit= '+str(tl)+'s | '
-    if emphasis==True:
+    if emphasis:
         my_prob.parameters.emphasis.mip.set(emp)
         parameter_str+='emphasis= '+str(emp)+' | ' 
-    if max_num_sol==True:
+    if max_num_sol:
         my_prob.parameters.mip.limits.solutions.set(sol)
         parameter_str+='max_num_sol= '+str(sol)+' | ' 
-    if max_search_nodes==True:
+    if max_search_nodes:
         my_prob.parameters.mip.limits.nodes.set(n)
         parameter_str+='max_search_nodes= '+str(n)+' | '
-    if aggregator_flag==True:   
+    if aggregator_flag:   
         my_prob.parameters.preprocessing.aggregator.set(agg)
-    if tolerane_flag==True:          
+    if tolerane_flag:          
         my_prob.parameters.mip.tolerances.absmipgap.set(tolerance_value)
         my_prob.parameters.mip.tolerances.mipgap.set(tolerance_value)
         #my_prob.parameters.mip.polishing.mipgap.set(1)
-    if Integrality==True:
+    if Integrality:
         my_prob.parameters.mip.tolerances.integrality.set(i_value)
-    if presolve_ignore==True:
+    if presolve_ignore:
         my_prob.parameters.preprocessing.presolve.set(presolve_value)
-    if advance_start==True:
+    if advance_start:
         my_prob.parameters.advance.set(advance_start_value) 
-    if repair_tries==True:
+    if repair_tries:
         my_prob.parameters.mip.limits.repairtries.set(repair_tries_value) 
-    if conflict_display==True:
+    if conflict_display:
         my_prob.parameters.conflict.display.set(conflict_value)        
-    if numerical_precision==True:
+    if numerical_precision:
         my_prob.parameters.emphasis.numerical.set(numerical_precision_value)  
-    if parallel_mode==True:
+    if parallel_mode:
         my_prob.parameters.parallel.set(-1) #  opportunistic parallel search mode
         my_prob.parameters.threads.set(parallel_mode_value)  
-    if display_interval==True:
+    if display_interval:
         my_prob.parameters.mip.display.set(display_value)
         my_prob.parameters.mip.interval.set(display_interval_value)
-    if tuning==True:        
-        #my_prob.parameters.tune.timelimit.set(tuning_time)
+    if tuning:        
         my_prob.parameters.tune_problem() 
-    if barriers==True:
+        #my_prob.parameters.tune.timelimit.set(tuning_time)
+    if barriers:
         my_prob.parameters.mip.strategy.startalgorithm.set(barrier_type)
         #my_prob.parameters.threads.set(threads)
         #my_prob.parameters.mip.limits.nodes.set(nodelim)
-        
-    
+           
     return parameter_str
 
 class MyCallback(cplex.callbacks.MIPInfoCallback):    
@@ -255,37 +251,6 @@ class Solution:
         g_dict=dict(gs)
         c_dict=dict(cs)
         dim=len(self.non_zero_omega.values()[0]) 
-     
-        
-        
-#        for i,b,l in product(range(1,self.N+1),range(1,self.B+1),range(1,dim+1)):
-#            if 'g'+str(i)+'_'+str(b)+'_'+str(l) not in g_dict.keys():
-#                g_dict['g'+str(i)+'_'+str(b)+'_'+str(l)]=0
-#        for i in range(1,self.N+1):
-#            c_similar_sum=0
-#            c_diff_sum=0
-#            for b in range(1,self.B+1):
-#                center=find_center(b,a_dict,self.N)
-#                y_i=int(population[int(i)][0])
-#                if center==-1:
-#                    continue
-#                if funtion_ij(population,i,center):                   
-#                    c_similar_sum+=c_dict['c'+str(i)+'_'+str(b)+'_'+str(y_i)]
-#                else:
-#                    if 'c'+str(i)+'_'+str(b)+'_'+str(y_i) in c_dict.keys():
-#                        c_diff_sum+=c_dict['c'+str(i)+'_'+str(b)+'_'+str(y_i)]
-#                    
-#            if c_similar_sum==0:
-#                k_dict['k'+str(i)]=1
-#            else:
-#                k_dict['k'+str(i)]=0
-#                
-#            if c_diff_sum>=1:
-#                n_dict['n'+str(i)]=1
-#            else:
-#                n_dict['n'+str(i)]=0        
-#        pp.pprint(k_dict.items())
-#        pp.pprint(n_dict.items())
 
         omega_dict={'o'+str(b)+'_'+str(dim):value for b,tup in self.non_zero_omega.items() for dim,value in tup}
         dim=len(self.non_zero_omega.values()[0])   
@@ -293,7 +258,6 @@ class Solution:
         dict_list=[k_dict,n_dict,a_dict,b_dict,c_dict,omega_dict,d_dict,v_dict,g_dict]
         [variable_dict.update(di) for di in dict_list]
         
-        #print pp.pprint(variable_dict.items())
         print 'num warm start variables =',len(variable_dict.keys())
         self.variable_dict=variable_dict   
         self.complete_solution=True
@@ -312,254 +276,7 @@ class Solution:
         else:
             return -1
 
-def func_alpha(j,b,non_zero_a):
-    if ((str(j),str(b))) in non_zero_a:
-        return ('a'+str(j)+'_'+str(b),1)
-    else:
-        return ('a'+str(j)+'_'+str(b),0)
 
-def func_beta(j,non_zero_b):
-    if 'b'+str(j) in non_zero_b:
-        return ('b'+str(j),1) 
-    else:
-        return ('b'+str(j),0) 
-        
-def func_c_ijb(i,j,b):
-    return ('c'+str(i)+'_'+str(j)+'_'+str(b),0)
-
-def func_c_iby(i,j,b,pop_new,non_zero_omega,non_zero_features):   
-    d_val,max_l=d_rectangular(int(i),int(j),b,pop_new,non_zero_omega,non_zero_features)
-    y_i=int(pop_new[int(i)][0])
-    y_j=int(pop_new[int(j)][0])
-    threshold=1-EPSILON
-    return (('d'+str(i)+'_'+str(b),d_val),('g'+str(i)+'_'+str(b)+'_'+str(max_l),1.0),('c'+str(i)+'_'+str(b)+'_'+str(y_i),(int((1-d_val)>1e-22)*int(y_i==y_j))))
-
-
-
-
-
-def d_rectangular(i,j,b,points,non_zero_omega,non_zero_features):
-    sorted_omega_values=zip(*sorted(non_zero_omega[str(b)],key=lambda x:x[0]))[1]
-    di_b_max=-1 
-    di_b_max_l=-1
-    for v in non_zero_features:
-        dim=int(v[1:])
-        di_b=sorted_omega_values[dim-1]*abs(points[i][dim]-points[j][dim])    
-        if di_b>di_b_max:
-          di_b_max=di_b 
-          di_b_max_l=dim
-    return di_b_max,di_b_max_l
-
-def d(i,j,b,points,omega):
-    '''Given alpha_jb and omega_b calculate d_ijb'''
-    difference=np.matrix(points[i][1:])-np.matrix(points[j][1:]) #row vector
-    dim=len(omega[str(b)])  
-    omega_b=np.zeros(shape=(dim,dim))
-    if b not in omega.keys():
-        print '10-6 ball is not in omega dict'
-        return 10e6
-    
-    omega_list= omega[str(b)]
-    for l,value in omega_list:
-        omega_b[int(l)-1][int(l)-1]=value
-    d=float(difference*np.matrix(omega_b)*difference.transpose())  
-    return d
-
-def find_center(ball,a_dict,N):
-    center=''.join(str(j) for j in range(1,N+1) if a_dict['a'+str(j)+'_'+str(ball)]==1)    
-    if center!='':
-        return int(center)
-    else:
-        return -1
-    
-
-def funtion_ij(points,i,j):
-    '''Return true if i and j have the same class.'''
-    return int(points[i][0]==points[j][0])   
-    
-def f(x):
-    if x==0:
-        return 100000000000
-    else:
-        return 2*1/math.sqrt(x)
-
-def create_points(points_file):
-    '''Read the points and create a data structure'''    
-    points=collections.OrderedDict()
-    names_dict={}
-    
-    with open(points_file,'r') as f:
-        content=f.readlines()         
-        header=content[0:HEADER]
-        header=','.join(header)
-        write_header=header
-        header_items=header.strip().split(',')
-        dimensions=len(header_items)-2 
-        header=header_items[2:]
-        
-        point_number=1
-        for line in content[HEADER:]:           
-            if line is not ' ':
-                point_info=line.strip().split(',')
-                if 'NA' in point_info:
-                    continue
-                data=map(float,point_info[1:])
-                data=[round(num,3) for num in data]
-                names_dict[point_number]=point_info[0]
-                points[point_number]=np.array(data) 
-                point_number+=1
-
-    N=len(points.keys())
- 
-    #write all points
-    with open('./all_data_'+str(len(points.keys()))+'.csv','w') as f:
-            for k in points.keys():
-                f.write(str(k)+','+','.join(map(str,points[k]))+'\n')
-                
-    return points,N,dimensions,names_dict,header
-    
-def create_fold_points(data_set,fold):
-    '''Read the points and create a data structure
-    run this for each fold to normalize  
-    ''' 
-    
-    train_file='data/'+data_set+'/fold'+str(fold)+'/train/fold_'+str(fold)+'_train.csv'
-    test_file='data/'+data_set+'/fold'+str(fold)+'/test/fold_'+str(fold)+'_test.csv'
-    HEADER=1
-    
-    #train
-    train_points=collections.OrderedDict()
-    names_dict={}
-    with open(train_file,'r') as f:
-        content=f.readlines()         
-        header=content[0:HEADER]
-        write_header=header
-        header=','.join(header)
-        header_items=header.strip().split(',')
-        dimensions=len(header_items)-2 
-        header=header_items[2:]
-        
-        point_number=1
-        for line in content[HEADER:]:           
-            if line is not ' ':
-                point_info=line.strip().split(',')
-                if 'NA' in point_info:
-                    continue
-                data=map(float,point_info[1:])
-                data=[round(num,3) for num in data]
-                names_dict[point_number]=point_info[0]
-                train_points[point_number]=np.array(data) 
-                point_number+=1
-
-    N=len(train_points.keys())
-    
-    #normalize train
-    df_train=pandas.DataFrame.from_dict(train_points,'index')
-    df_train_normalized=pandas.DataFrame.from_dict(train_points,'index')
-    cols_to_norm = [i for i in xrange(1,dimensions+1)]
-    df_train_normalized[cols_to_norm] = df_train[cols_to_norm].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))
-    train_points=df_train_normalized.transpose().to_dict('list')
-    
-    with open('data/'+data_set+'/fold'+str(fold)+'/train/fold_'+str(fold)+'_train_normalized.csv','w') as f:
-            f.write(','.join(write_header))            
-            for k in train_points.keys():
-                f.write(names_dict[k]+','+','.join(map(str,train_points[k]))+'\n')
-          
-    
-    #test
-    test_points=collections.OrderedDict()
-    names_dict_train={}
-    with open(test_file,'r') as f:
-        content=f.readlines()         
-        point_number=1
-        for line in content[HEADER:]:           
-            if line is not ' ':
-                point_info=line.strip().split(',')
-                if 'NA' in point_info:
-                    continue
-                data=map(float,point_info[1:])
-                names_dict_train[point_number]=point_info[0]
-                data=[round(num,3) for num in data]
-                test_points[point_number]=np.array(data) 
-                point_number+=1
-
-     
-    #normalize test
-    df_test=pandas.DataFrame.from_dict(test_points,'index')
-    df_test_normalized=pandas.DataFrame.from_dict(test_points,'index')
-    df_test_normalized[cols_to_norm] = (df_test[cols_to_norm]-df_train.mean()[cols_to_norm])/(df_train.max()[cols_to_norm]-df_train.min()[cols_to_norm])    
-    test_points=df_test_normalized.transpose().to_dict('list')
-    
-    with open('data/'+data_set+'/fold'+str(fold)+'/test/fold_'+str(fold)+'_test_normalized.csv','w') as f:
-        f.write(','.join(write_header))        
-        for k in test_points.keys():
-            f.write(names_dict_train[k]+','+','.join(map(str,test_points[k]))+'\n')
-          
-    
-    return train_points,N,dimensions,names_dict,header,test_points
-
-      
-    
-def create_raw_points(points_file):
-    '''Read the points and create a data structure'''    
-    points=collections.OrderedDict()
-    names_dict={}
-    
-    with open(points_file,'r') as f:
-        content=f.readlines()         
-        header=content[0:HEADER]
-        header=','.join(header)
-        header_items=header.strip().split(',')
-        dimensions=len(header_items)-2 
-        header=header_items[2:]
-        
-        point_number=1
-        for line in content[HEADER:]:           
-            if line is not ' ':
-                point_info=line.strip().split(',')
-                if 'NA' in point_info:
-                    continue
-                data=map(float,point_info[1:])
-                data=[round(num,3) for num in data]
-                names_dict[point_number]=point_info[0]
-                points[point_number]=np.array(data) 
-                point_number+=1
-
-    N=len(points.keys())            
-    return points
-    
-def create_raw_points_folds(data_set,fold):
-    '''Read the points and create a data structure'''    
-    points_file='./data/'+data_set+'/fold'+str(fold)+'/train/fold_'+str(fold)+'_train.csv'  
-    points=collections.OrderedDict()
-    names_dict={}
-    
-    with open(points_file,'r') as f:
-        content=f.readlines()         
-        header=content[0:HEADER]
-        header=','.join(header)
-        header_items=header.strip().split(',')
-        dimensions=len(header_items)-2 
-        header=header_items[2:]
-        
-        point_number=1
-        for line in content[HEADER:]:           
-            if line is not ' ':
-                point_info=line.strip().split(',')
-                if 'NA' in point_info:
-                    continue
-                data=map(float,point_info[1:])
-                data=[round(num,3) for num in data]
-                names_dict[point_number]=point_info[0]
-                points[point_number]=np.array(data) 
-                point_number+=1
-
-    N=len(points.keys())            
-    return points
-    
-
-    
-   
 def populate_objective(prob,lambda_o,B,N,dimensions,num_classes):
     '''Populate objective values'''
     #objective coeffcients    
@@ -1164,6 +881,255 @@ def generate_constraints(prob,points,N,dimensions,B,name_index_dict,alt_type,ome
     add_time=round(b-a,2)
     
     return add_time,time_in_loop   
+
+
+
+
+
+def func_alpha(j,b,non_zero_a):
+    if ((str(j),str(b))) in non_zero_a:
+        return ('a'+str(j)+'_'+str(b),1)
+    else:
+        return ('a'+str(j)+'_'+str(b),0)
+
+def func_beta(j,non_zero_b):
+    if 'b'+str(j) in non_zero_b:
+        return ('b'+str(j),1) 
+    else:
+        return ('b'+str(j),0) 
+        
+def func_c_ijb(i,j,b):
+    return ('c'+str(i)+'_'+str(j)+'_'+str(b),0)
+
+def func_c_iby(i,j,b,pop_new,non_zero_omega,non_zero_features):   
+    d_val,max_l=d_rectangular(int(i),int(j),b,pop_new,non_zero_omega,non_zero_features)
+    y_i=int(pop_new[int(i)][0])
+    y_j=int(pop_new[int(j)][0])
+    threshold=1-EPSILON
+    return (('d'+str(i)+'_'+str(b),d_val),('g'+str(i)+'_'+str(b)+'_'+str(max_l),1.0),('c'+str(i)+'_'+str(b)+'_'+str(y_i),(int((1-d_val)>1e-22)*int(y_i==y_j))))
+
+def d_rectangular(i,j,b,points,non_zero_omega,non_zero_features):
+    sorted_omega_values=zip(*sorted(non_zero_omega[str(b)],key=lambda x:x[0]))[1]
+    di_b_max=-1 
+    di_b_max_l=-1
+    for v in non_zero_features:
+        dim=int(v[1:])
+        di_b=sorted_omega_values[dim-1]*abs(points[i][dim]-points[j][dim])    
+        if di_b>di_b_max:
+          di_b_max=di_b 
+          di_b_max_l=dim
+    return di_b_max,di_b_max_l
+
+def d(i,j,b,points,omega):
+    '''Given alpha_jb and omega_b calculate d_ijb'''
+    difference=np.matrix(points[i][1:])-np.matrix(points[j][1:]) #row vector
+    dim=len(omega[str(b)])  
+    omega_b=np.zeros(shape=(dim,dim))
+    if b not in omega.keys():
+        print '10-6 ball is not in omega dict'
+        return 10e6
+    
+    omega_list= omega[str(b)]
+    for l,value in omega_list:
+        omega_b[int(l)-1][int(l)-1]=value
+    d=float(difference*np.matrix(omega_b)*difference.transpose())  
+    return d
+
+def find_center(ball,a_dict,N):
+    center=''.join(str(j) for j in range(1,N+1) if a_dict['a'+str(j)+'_'+str(ball)]==1)    
+    if center!='':
+        return int(center)
+    else:
+        return -1
+    
+
+def funtion_ij(points,i,j):
+    '''Return true if i and j have the same class.'''
+    return int(points[i][0]==points[j][0])   
+    
+def f(x):
+    if x==0:
+        return 100000000000
+    else:
+        return 2*1/math.sqrt(x)
+
+def create_points(points_file):
+    '''Read the points and create a data structure'''    
+    points=collections.OrderedDict()
+    names_dict={}
+    
+    with open(points_file,'r') as f:
+        content=f.readlines()         
+        header=content[0:HEADER]
+        header=','.join(header)
+        write_header=header
+        header_items=header.strip().split(',')
+        dimensions=len(header_items)-2 
+        header=header_items[2:]
+        
+        point_number=1
+        for line in content[HEADER:]:           
+            if line is not ' ':
+                point_info=line.strip().split(',')
+                if 'NA' in point_info:
+                    continue
+                data=map(float,point_info[1:])
+                data=[round(num,3) for num in data]
+                names_dict[point_number]=point_info[0]
+                points[point_number]=np.array(data) 
+                point_number+=1
+
+    N=len(points.keys())
+ 
+    #write all points
+    with open('./all_data_'+str(len(points.keys()))+'.csv','w') as f:
+            for k in points.keys():
+                f.write(str(k)+','+','.join(map(str,points[k]))+'\n')
+                
+    return points,N,dimensions,names_dict,header
+    
+def create_fold_points(data_set,fold):
+    '''Read the points and create a data structure
+    run this for each fold to normalize  
+    '''    
+    train_file='data/'+data_set+'/fold'+str(fold)+'/train/fold_'+str(fold)+'_train.csv'
+    test_file='data/'+data_set+'/fold'+str(fold)+'/test/fold_'+str(fold)+'_test.csv'
+    HEADER=1
+    
+    #train
+    train_points=collections.OrderedDict()
+    names_dict={}
+    with open(train_file,'r') as f:
+        content=f.readlines()         
+        header=content[0:HEADER]
+        write_header=header
+        header=','.join(header)
+        header_items=header.strip().split(',')
+        dimensions=len(header_items)-2 
+        header=header_items[2:]
+        
+        point_number=1
+        for line in content[HEADER:]:           
+            if line is not ' ':
+                point_info=line.strip().split(',')
+                if 'NA' in point_info:
+                    continue
+                data=map(float,point_info[1:])
+                data=[round(num,3) for num in data]
+                names_dict[point_number]=point_info[0]
+                train_points[point_number]=np.array(data) 
+                point_number+=1
+
+    N=len(train_points.keys())
+    
+    #normalize train
+    df_train=pandas.DataFrame.from_dict(train_points,'index')
+    df_train_normalized=pandas.DataFrame.from_dict(train_points,'index')
+    cols_to_norm = [i for i in xrange(1,dimensions+1)]
+    df_train_normalized[cols_to_norm] = df_train[cols_to_norm].apply(lambda x: (x - x.mean()) / (x.max() - x.min()))
+    train_points=df_train_normalized.transpose().to_dict('list')
+    
+    with open('data/'+data_set+'/fold'+str(fold)+'/train/fold_'+str(fold)+'_train_normalized.csv','w') as f:
+            f.write(','.join(write_header))            
+            for k in train_points.keys():
+                f.write(names_dict[k]+','+','.join(map(str,train_points[k]))+'\n')
+          
+    
+    #test
+    test_points=collections.OrderedDict()
+    names_dict_train={}
+    with open(test_file,'r') as f:
+        content=f.readlines()         
+        point_number=1
+        for line in content[HEADER:]:           
+            if line is not ' ':
+                point_info=line.strip().split(',')
+                if 'NA' in point_info:
+                    continue
+                data=map(float,point_info[1:])
+                names_dict_train[point_number]=point_info[0]
+                data=[round(num,3) for num in data]
+                test_points[point_number]=np.array(data) 
+                point_number+=1
+
+     
+    #normalize test
+    df_test=pandas.DataFrame.from_dict(test_points,'index')
+    df_test_normalized=pandas.DataFrame.from_dict(test_points,'index')
+    df_test_normalized[cols_to_norm] = (df_test[cols_to_norm]-df_train.mean()[cols_to_norm])/(df_train.max()[cols_to_norm]-df_train.min()[cols_to_norm])    
+    test_points=df_test_normalized.transpose().to_dict('list')
+    
+    with open('data/'+data_set+'/fold'+str(fold)+'/test/fold_'+str(fold)+'_test_normalized.csv','w') as f:
+        f.write(','.join(write_header))        
+        for k in test_points.keys():
+            f.write(names_dict_train[k]+','+','.join(map(str,test_points[k]))+'\n')
+          
+    
+    return train_points,N,dimensions,names_dict,header,test_points
+
+      
+    
+def create_raw_points(points_file):
+    '''Read the points and create a data structure'''    
+    points=collections.OrderedDict()
+    names_dict={}
+    
+    with open(points_file,'r') as f:
+        content=f.readlines()         
+        header=content[0:HEADER]
+        header=','.join(header)
+        header_items=header.strip().split(',')
+        dimensions=len(header_items)-2 
+        header=header_items[2:]
+        
+        point_number=1
+        for line in content[HEADER:]:           
+            if line is not ' ':
+                point_info=line.strip().split(',')
+                if 'NA' in point_info:
+                    continue
+                data=map(float,point_info[1:])
+                data=[round(num,3) for num in data]
+                names_dict[point_number]=point_info[0]
+                points[point_number]=np.array(data) 
+                point_number+=1
+
+    N=len(points.keys())            
+    return points
+    
+def create_raw_points_folds(data_set,fold):
+    '''Read the points and create a data structure'''    
+    points_file='./data/'+data_set+'/fold'+str(fold)+'/train/fold_'+str(fold)+'_train.csv'  
+    points=collections.OrderedDict()
+    names_dict={}
+    
+    with open(points_file,'r') as f:
+        content=f.readlines()         
+        header=content[0:HEADER]
+        header=','.join(header)
+        header_items=header.strip().split(',')
+        dimensions=len(header_items)-2 
+        header=header_items[2:]
+        
+        point_number=1
+        for line in content[HEADER:]:           
+            if line is not ' ':
+                point_info=line.strip().split(',')
+                if 'NA' in point_info:
+                    continue
+                data=map(float,point_info[1:])
+                data=[round(num,3) for num in data]
+                names_dict[point_number]=point_info[0]
+                points[point_number]=np.array(data) 
+                point_number+=1
+
+    N=len(points.keys())            
+    return points
+    
+
+    
+   
+
     
 def extract(result,points,dimensions):
     '''Takes in a result dictionary,points and extracts the variable values into lists'''
